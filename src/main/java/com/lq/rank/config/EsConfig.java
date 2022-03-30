@@ -1,5 +1,8 @@
 package com.lq.rank.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -30,11 +33,11 @@ import java.security.cert.CertificateFactory;
 public class EsConfig {
 
     @Bean
-    public RestHighLevelClient getEsClient() throws Exception {
+    public ElasticsearchClient getEsClient() throws Exception {
 
 
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "3udsDR75SPIxZqTM+ZSh"));
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "TL=53_6v2Ak2g_jkZhqc"));
 
 
 //        RestClientBuilder builder = RestClient.builder(
@@ -53,10 +56,11 @@ public class EsConfig {
         trustStore.setCertificateEntry("ca", trustedCa);
         SSLContextBuilder sslContextBuilder = SSLContexts.custom().loadTrustMaterial(trustStore, null);
         final SSLContext sslContext = sslContextBuilder.build();
-        RestClientBuilder builder = RestClient.builder(new HttpHost("localhost", 9200, "https"))
-                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setSSLContext(sslContext).setDefaultCredentialsProvider(credentialsProvider));
+        RestClient builder = RestClient.builder(new HttpHost("localhost", 9200, "https"))
+                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setSSLContext(sslContext).setDefaultCredentialsProvider(credentialsProvider)).build();
 
-        return new RestHighLevelClient(builder);
+        RestClientTransport restClientTransport = new RestClientTransport(builder, new JsonbJsonpMapper());
+        return new ElasticsearchClient(restClientTransport);
     }
 
 }
