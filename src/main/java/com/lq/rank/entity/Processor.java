@@ -1,7 +1,9 @@
 package com.lq.rank.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
@@ -13,6 +15,8 @@ import org.springframework.data.elasticsearch.annotations.Setting;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(indexName = "cpu")
 @Setting(useServerConfiguration = true)
 public class Processor {
