@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = "car", useServerConfiguration = true)
+//@Document(indexName = "car", useServerConfiguration = true)
 @Data
 @Builder
 @AllArgsConstructor
