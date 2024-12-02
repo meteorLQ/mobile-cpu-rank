@@ -23,6 +23,7 @@ public class TestNewApi {
     @Autowired
     @Qualifier("getEsClient")
     ElasticsearchClient elasticsearchClient;
+    private static String RANK_LADDER="rank-ladder";
 
     @Test
     public void test() throws Exception {
@@ -35,16 +36,13 @@ public class TestNewApi {
 
     @Test
     public void create() throws IOException {
-        ElasticsearchIndicesClient indices = elasticsearchClient.indices();
-        CreateIndexRequest createIndexRequest = CreateIndexRequest.of(builder -> builder.index("rank-ladder"));
-        indices.create(createIndexRequest);
+        elasticsearchClient.indices().create(req->req.index(RANK_LADDER));
         elasticsearchClient.close();
     }
     @Test
     public void get() throws IOException {
-        ElasticsearchIndicesClient indices = elasticsearchClient.indices();
-        GetIndexResponse getIndexResponse = indices.get(req->req.index("rank-ladder"));
-        IndexState indexState = getIndexResponse.get("rank-ladder");
+        GetIndexResponse getIndexResponse = elasticsearchClient.indices().get(req->req.index(RANK_LADDER));
+        IndexState indexState = getIndexResponse.get(RANK_LADDER);
         System.out.println(indexState);
         elasticsearchClient.close();
     }
@@ -52,7 +50,7 @@ public class TestNewApi {
     //查询Index
     @Test
     public void indices() throws Exception {
-        GetIndexResponse cpu = elasticsearchClient.indices().get(i -> i.index("cpu"));
+        GetIndexResponse cpu = elasticsearchClient.indices().get(i -> i.index(RANK_LADDER));
         System.out.println("cpu = " + cpu);
     }
 
@@ -68,14 +66,14 @@ public class TestNewApi {
         List snapdragonCPUInfo = HtmlParseUtil.getSnapdragonCPUInfo();
         for (int j = 0; j < snapdragonCPUInfo.size(); j++) {
             int finalJ = j;
-            elasticsearchClient.create(i->i.index("rank-ladder").id(finalJ +"").document(snapdragonCPUInfo.get(finalJ)));
+            elasticsearchClient.create(i->i.index(RANK_LADDER).id(finalJ +"").document(snapdragonCPUInfo.get(finalJ)));
         }
 
     }
 
     @Test
     public void search() throws Exception {
-        SearchResponse<Processor> cpu = elasticsearchClient.search(s -> s.index("cpu").from(0).size(20), Processor.class);
+        SearchResponse<Processor> cpu = elasticsearchClient.search(s -> s.index(RANK_LADDER).from(0).size(20), Processor.class);
         List<Hit<Processor>> hits = cpu.hits().hits();
         hits.forEach(h-> System.out.println("h.source() = " + h.source()));
     }
